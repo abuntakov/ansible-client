@@ -1,0 +1,3 @@
+---
+- include: setup.yml
+  when: log_server_host is defined and log_server_host != ''

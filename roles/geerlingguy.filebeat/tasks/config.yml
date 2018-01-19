@@ -1,0 +1,30 @@
+---
+- name: Copy Filebeat configuration.
+  template:
+    src: filebeat.yml.j2
+    dest: "/etc/filebeat/filebeat.yml"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart filebeat
+
+- name: Ensure Logstash SSL key pair directory exists.
+  file:
+    path: "{{ logstash_ssl_dir }}"
+    state: directory
+  when: logstash_ssl_certificate_file != ""
+
+- name: Check if Logstash certificate authorities installed
+  stat: path={{ filebeat_output_logstash_ca }}
+  register: logstash_certificate_authorities_installed
+
+- name: Copy certificate authorities
+  copy:
+    src: "files/{{ item }}"
+    dest: "{{ filebeat_output_logstash_ca }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - "{{ logstash_ssl_certificate_file }}"
+  when: (filebeat_output_logstash_ca_enabled) and (logstash_certificate_authorities_installed.stat.exists == false)
