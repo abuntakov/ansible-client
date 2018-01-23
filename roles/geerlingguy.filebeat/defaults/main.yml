@@ -3,11 +3,26 @@ filebeat_create_config: true
 
 filebeat_prospectors:
   - input_type: log
+    multiline:
+      pattern: '^\d{4}-\d{2}-\d{2}'
+      negate: true
+      match: after
     paths:
       - "/var/log/MyAppName/*.log"
     fields:
       tags: ["MyAppName", "production"]
       log_type: "log4j"
+
+  - input_type: log
+    multiline:
+      pattern: '^\d{4}-\d{2}-\d{2}'
+      match: after
+      negate: true
+    paths:
+      - "{{ postgresql_logs }}/*.csv"
+    fields:
+      tags: ["postgresql", "production"]
+      log_type: "postgresql"
 
 filebeat_output_elasticsearch_enabled: false
 

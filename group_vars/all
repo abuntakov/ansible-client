@@ -1,3 +1,4 @@
 ---
 test_var: Hello, world!
 log_server_host: vm.local
+postgresql_logs: /var/log/postgresql
